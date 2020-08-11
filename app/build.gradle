@@ -1,0 +1,72 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "czcz94cz.photovalley"
+        minSdkVersion 21
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters 'arm64-v8a'
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ["libs"]
+            jni.srcDirs = ['src/main/jni', 'src/main/jni/']
+        }
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:cardview-v7:27.1.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.shizhefei:LargeImageView:1.1.0'
+    implementation 'com.github.uin3566:AllAngleExpandableButton:v1.2.0'
+    implementation 'tyrantgit:explosionfield:1.0.1'
+    implementation 'com.flipboard:bottomsheet-core:1.5.3'
+    implementation 'com.github.bumptech.glide:glide:4.6.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.gyf.immersionbar:immersionbar:3.0.0-beta05'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+    implementation 'com.sdsmdg.tastytoast:tastytoast:0.1.1'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    //让app包，与新添加的这个OpenCV库关联
+    implementation project(':openCVLibrary341')
+    //将打好jar包，添加到依赖中
+    implementation fileTree(dir: "$buildDir/native-libs", include: 'native-libs.jar')
+    implementation project(':macelibrary')
+
+}
+
+//将添加的.so文件，打包成jar
+task nativeLibsToJar(type: Jar, description: 'create a jar archive of the native libs') {
+    destinationDir file("$buildDir/native-libs")
+    baseName 'native-libs'
+    from fileTree(dir: 'libs', include: '**/*.so')
+    into 'lib/'
+}
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.dependsOn(nativeLibsToJar)
+}
+repositories {
+    mavenCentral()
+}
