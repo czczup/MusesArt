@@ -38,7 +38,7 @@ public class StyleTransferUtils {
         int cnt = 0;
         for (Mat mat: mats) {
             Bitmap bitmap = OpenCVUtils.mat2bitmap(mat); // 不要释放mat
-            mat.release(); // TODO 正式部署时不要释放mat
+//            mat.release(); // TODO 正式部署时不要释放mat
             Bitmap stylizedBitmap = StyleTransfer.instance.transfer(bitmap);
             bitmap.recycle(); // 释放内存
             Mat stylizedMat = OpenCVUtils.bitmap2mat(stylizedBitmap);
@@ -47,7 +47,7 @@ public class StyleTransferUtils {
             cnt++;
             Log.d("StyleTransferUtils", "styleTransfer: "+cnt+"/"+mats.size());
         }
-        mats.clear(); // TODO 正式部署时不要释放mat
+//        mats.clear(); // TODO 正式部署时不要释放mat
         long styleTransferTime = SystemClock.uptimeMillis() - startTime;
         StyleTransfer.instance.deleteEngine(); // 释放模型占用内存
         Log.d("StyleTransferUtils", "styleTransfer time: "+styleTransferTime);
